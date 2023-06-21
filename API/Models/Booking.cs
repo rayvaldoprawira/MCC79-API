@@ -17,7 +17,7 @@ namespace API.Models
         public StatusLevel Status { get; set; }
 
         [Column("remarks", TypeName = "nvarchar(max)")]
-        public string Remarks { get; set; }
+        public string? Remarks { get; set; }
 
         [Column("room_guid")]
         public Guid RoomGuid { get; set; }

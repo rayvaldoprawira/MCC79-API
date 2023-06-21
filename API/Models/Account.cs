@@ -13,10 +13,10 @@ namespace API.Models
         public bool IsDeleted { get; set; }
 
         [Column("otp")]
-        public int Otp { get; set; }
+        public int? Otp { get; set; }
 
         [Column("is_used")]
-        public bool IsUsed { get; set; }
+        public bool? IsUsed { get; set; }
 
         [Column("expired_time")]
         public DateTime ExpiredTime { get; set; }
