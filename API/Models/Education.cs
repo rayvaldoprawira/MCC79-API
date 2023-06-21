@@ -4,12 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace API.Models
 {
     [Table("tb_m_educations")]
-    public class Education
+    public class Education : BaseEntity
     {
-        [Key]
-        [Column("guid")]
-        public Guid Guid { get; set; }
-
         [Column("major", TypeName = "nvarchar(100)")]
         public string Major { get; set; }
 
@@ -22,12 +18,10 @@ namespace API.Models
         [Column("university_guid")]
         public Guid UniversityGuid { get; set; }
 
-        [Column("created_date")]
-        public DateTime CreatedDate { get; set; }
+        // Cardinality 
+        public University University { get; set; }
 
-        [Column("modified_date")]
-        public DateTime ModifiedDate { get; set;}
-
+        public Employee Employee { get; set; }
 
     }
 }
