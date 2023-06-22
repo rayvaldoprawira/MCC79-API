@@ -15,6 +15,6 @@ public class University : BaseEntity
     public string Name { get; set; }
 
     // Cardinality
-    public ICollection<Education> Educations { get; set; }
+    public ICollection<Education>? Educations { get; set; }
 }
 

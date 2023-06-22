@@ -38,6 +38,6 @@ namespace API.Models
 
         public Account Account { get; set; }
 
-        public ICollection<Booking> Bookings { get; set;}
+        public ICollection<Booking>? Bookings { get; set;}
     }
 }
