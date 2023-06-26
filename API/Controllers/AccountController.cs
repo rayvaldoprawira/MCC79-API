@@ -2,19 +2,18 @@
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers;
+/*
+[ApiController]
+[Route("Api/accounts")]
+public class AccountController : GeneralController<Account>
 {
-    [ApiController]
-    [Route("Api/accounts")]
-    public class AccountController : GeneralController<Account>
+    private readonly IAccountRepository _repository;
+
+    public AccountController(IAccountRepository repository) : base(repository)
     {
-        private readonly IAccountRepository _repository;
-
-        public AccountController(IAccountRepository repository) : base(repository)
-        {
-            _repository = repository;
-        }
+        _repository = repository;
     }
-
- 
 }
+*/
+

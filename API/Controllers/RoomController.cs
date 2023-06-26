@@ -2,18 +2,18 @@
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers;
+/*
+[ApiController]
+[Route("api/rooms")]
+public class RoomController : GeneralController<Room>
 {
-    [ApiController]
-    [Route("api/rooms")]
-    public class RoomController : GeneralController<Room>
+    private readonly IRoomRepository _repository;
+    public RoomController(IRoomRepository repository) : base (repository)
     {
-        private readonly IRoomRepository _repository;
-        public RoomController(IRoomRepository repository) : base (repository)
-        {
-            _repository = repository;
-        }
-
-        
+        _repository = repository;
     }
+
+    
 }
+*/

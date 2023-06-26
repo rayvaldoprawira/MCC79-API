@@ -2,12 +2,11 @@
 using API.Data;
 using API.Models;
 
-namespace API.Repositories
+namespace API.Repositories;
+
+public class RoleRepository : GeneralRepository<Role>, IRoleRepository
 {
-    public class RoleRepository : GeneralRepository<Role>, IRoleRepository
+    public RoleRepository(BookingDbContext context) : base(context)
     {
-        public RoleRepository(BookingDbContext context) : base(context)
-        {
-        }
     }
 }

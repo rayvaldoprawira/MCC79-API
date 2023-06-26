@@ -2,18 +2,18 @@
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers;
+/*
+[ApiController]
+[Route("api/educations")]
+public class EducationController : GeneralController<Education>
 {
-    [ApiController]
-    [Route("api/educations")]
-    public class EducationController : GeneralController<Education>
+    private readonly IEducationRepository _repository;
+
+    public EducationController(IEducationRepository repository) : base(repository)
     {
-        private readonly IEducationRepository _repository;
-
-        public EducationController(IEducationRepository repository) : base(repository)
-        {
-            _repository = repository;
-        }
-
+        _repository = repository;
     }
+
 }
+*/
