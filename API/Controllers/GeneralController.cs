@@ -5,6 +5,7 @@ using System.Security.Principal;
 
 namespace API.Controllers;
 
+[ApiController]
 public class GeneralController<TEntity> : ControllerBase
     where TEntity : class
 {
