@@ -16,7 +16,7 @@ namespace API.Controllers
             _repository = repository;
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("/{name}")]
         public IActionResult GetByName(string name)
         {
             var university = _repository.GetByName(name);
