@@ -1,6 +1,7 @@
 ﻿using API.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using API.Models;
+using System;
 
 namespace API.Controllers
 {
@@ -10,9 +11,21 @@ namespace API.Controllers
     {
         private readonly IUniversityRepository _repository;
 
-        public UniversityController(IUniversityRepository repository) : base (repository)
+        public UniversityController(IUniversityRepository repository) : base(repository)
         {
             _repository = repository;
+        }
+
+        [HttpGet("{name}")]
+        public IActionResult GetByName(string name)
+        {
+            var university = _repository.GetByName(name);
+            if (university is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(university);
         }
 
     }
