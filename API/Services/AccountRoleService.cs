@@ -13,6 +13,7 @@ public class AccountRoleService
         _accountRoleRepository = accountRoleRepository;
     }
 
+
     public IEnumerable<GetAccountRoleDto>? GetAccountRole()
     {
         var accountRoles = _accountRoleRepository.GetAll();

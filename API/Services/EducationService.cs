@@ -56,7 +56,7 @@ namespace API.Services
         {
             var education = new Education
             {
-                Guid = new Guid(),
+                Guid = newEducationDto.Guid,
                 Major = newEducationDto.Major,
                 Degree = newEducationDto.Degree,
                 Gpa = newEducationDto.Gpa,
@@ -73,11 +73,11 @@ namespace API.Services
 
             var toDto = new GetEducationDto
             {
-                Guid = education.Guid,
-                Major = education.Major,
-                Degree = education.Degree,
-                Gpa = education.Gpa,
-                UniversityGuid = education.UniversityGuid
+                Guid = createdEducation.Guid,
+                Major = createdEducation.Major,
+                Degree = createdEducation.Degree,
+                Gpa = createdEducation.Gpa,
+                UniversityGuid = createdEducation.UniversityGuid
             };
 
             return toDto; // education created

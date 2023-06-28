@@ -105,8 +105,8 @@ namespace API.Controllers
             {
                 return BadRequest(new ResponseHandler<UpdateRoleDto>
                 {
-                    Code = StatusCodes.Status500InternalServerError,
-                    Status = HttpStatusCode.InternalServerError.ToString(),
+                    Code = StatusCodes.Status400BadRequest,
+                    Status = HttpStatusCode.BadRequest.ToString(),
                     Message = "Check your data"
                 });
             }

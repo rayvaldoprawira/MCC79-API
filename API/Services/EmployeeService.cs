@@ -2,153 +2,165 @@
 using API.DTOs.Employees;
 using API.Models;
 
-namespace API.Services
+namespace API.Services;
+
+public class EmployeeService
 {
-    public class EmployeeService
+    private readonly IEmployeeRepository _employeeRepository;
+    public EmployeeService(IEmployeeRepository employeeRepository)
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        _employeeRepository = employeeRepository;
+    }
+
+    public IEnumerable<GetEmployeeDto>? GetEmployee()
+    {
+        var employees = _employeeRepository.GetAll();
+        if (!employees.Any())
         {
-            _employeeRepository = employeeRepository;
+            return null; // No employee  found
         }
 
-        public IEnumerable<GetEmployeeDto>? GetEmployee()
+        var toDto = employees.Select(employee =>
+                                            new GetEmployeeDto
+                                            {
+                                                Guid = employee.Guid,
+                                                Nik = employee.Nik,
+                                                BirthDate = employee.BirthDate,
+                                                Email = employee.Email,
+                                                FirstName = employee.FirstName,
+                                                LastName = employee.LastName,
+                                                Gender = employee.Gender,
+                                                HiringDate = employee.HiringDate,
+                                                PhoneNumber = employee.PhoneNumber
+                                            }).ToList();
+
+        return toDto; // employee found
+    }
+
+    public GetEmployeeDto? GetEmployee(Guid guid)
+    {
+        var employee = _employeeRepository.GetByGuid(guid);
+        if (employee is null)
         {
-            var employees = _employeeRepository.GetAll();
-            if (!employees.Any())
-            {
-                return null; // No employee  found
-            }
-
-            var toDto = employees.Select(employee =>
-                                                new GetEmployeeDto
-                                                {
-                                                    Guid = employee.Guid,
-                                                    Nik = employee.Nik,
-                                                    BirthDate = employee.BirthDate,
-                                                    Email = employee.Email,
-                                                    FirstName = employee.FirstName,
-                                                    LastName = employee.LastName,
-                                                    Gender = employee.Gender,
-                                                    HiringDate = employee.HiringDate,
-                                                    PhoneNumber = employee.PhoneNumber
-                                                }).ToList();
-
-            return toDto; // employee found
+            return null; // employee not found
         }
 
-        public GetEmployeeDto? GetEmployee(Guid guid)
+        var toDto = new GetEmployeeDto
         {
-            var employee = _employeeRepository.GetByGuid(guid);
-            if (employee is null)
-            {
-                return null; // employee not found
-            }
+            Guid = employee.Guid,
+            Nik = employee.Nik,
+            BirthDate = employee.BirthDate,
+            Email = employee.Email,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Gender = employee.Gender,
+            HiringDate = employee.HiringDate,
+            PhoneNumber = employee.PhoneNumber
+        };
+        return toDto; // employees found
+    }
 
-            var toDto = new GetEmployeeDto
-            {
-                Guid = employee.Guid,
-                Nik = employee.Nik,
-                BirthDate = employee.BirthDate,
-                Email = employee.Email,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                Gender = employee.Gender,
-                HiringDate = employee.HiringDate,
-                PhoneNumber = employee.PhoneNumber
-            };
-            return toDto; // employees found
+    public GetEmployeeDto? CreateEmployee(CreateEmployeeDto newEmployeeDto)
+    {
+        var employee = new Employee
+        {
+            Guid = new Guid(),
+            PhoneNumber = newEmployeeDto.PhoneNumber,
+            FirstName = newEmployeeDto.FirstName,
+            LastName = newEmployeeDto.LastName,
+            Gender = newEmployeeDto.Gender,
+            HiringDate = newEmployeeDto.HiringDate,
+            Email = newEmployeeDto.Email,
+            BirthDate = newEmployeeDto.BirthDate,
+            Nik = GenerateNik(),
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now
+        };
+
+        var createdEmployee = _employeeRepository.Create(employee);
+        if (createdEmployee is null)
+        {
+            return null; // employee not created
         }
 
-        public GetEmployeeDto? CreateEmployee(CreateEmployeeDto newEmployeeDto)
+        var toDto = new GetEmployeeDto
         {
-            var employee = new Employee
-            {
-                Guid = new Guid(),
-                PhoneNumber = newEmployeeDto.PhoneNumber,
-                FirstName = newEmployeeDto.FirstName,
-                LastName = newEmployeeDto.LastName,
-                Gender = newEmployeeDto.Gender,
-                HiringDate = newEmployeeDto.HiringDate,
-                Email = newEmployeeDto.Email,
-                BirthDate = newEmployeeDto.BirthDate,
-                Nik = newEmployeeDto.Nik,
-                CreatedDate = DateTime.Now,
-                ModifiedDate = DateTime.Now
-            };
+            Guid = employee.Guid,
+            Nik = employee.Nik,
+            BirthDate = employee.BirthDate,
+            Email = employee.Email,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Gender = employee.Gender,
+            HiringDate = employee.HiringDate,
+            PhoneNumber = employee.PhoneNumber
+        };
 
-            var createdEmployee = _employeeRepository.Create(employee);
-            if (createdEmployee is null)
-            {
-                return null; // employee not created
-            }
+        return toDto; // employee created
+    }
 
-            var toDto = new GetEmployeeDto
-            {
-                Guid = employee.Guid,
-                Nik = employee.Nik,
-                BirthDate = employee.BirthDate,
-                Email = employee.Email,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                Gender = employee.Gender,
-                HiringDate = employee.HiringDate,
-                PhoneNumber = employee.PhoneNumber
-            };
-
-            return toDto; // employee created
+    public int UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
+    {
+        var isExist = _employeeRepository.IsExist(updateEmployeeDto.Guid);
+        if (!isExist)
+        {
+            return -1; // employee not found
         }
 
-        public int UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
+        var getEmployee = _employeeRepository.GetByGuid(updateEmployeeDto.Guid);
+
+        var employee = new Employee
         {
-            var isExist = _employeeRepository.IsExist(updateEmployeeDto.Guid);
-            if (!isExist)
-            {
-                return -1; // employee not found
-            }
+            Guid = updateEmployeeDto.Guid,
+            PhoneNumber = updateEmployeeDto.PhoneNumber,
+            FirstName = updateEmployeeDto.FirstName,
+            LastName = updateEmployeeDto.LastName,
+            Gender = updateEmployeeDto.Gender,
+            HiringDate = updateEmployeeDto.HiringDate,
+            Email = updateEmployeeDto.Email,
+            BirthDate = updateEmployeeDto.BirthDate,
+            Nik = updateEmployeeDto.Nik,
+            ModifiedDate = DateTime.Now,
+            CreatedDate = getEmployee!.CreatedDate
+        };
 
-            var getEmployee = _employeeRepository.GetByGuid(updateEmployeeDto.Guid);
-
-            var employee = new Employee
-            {
-                Guid = updateEmployeeDto.Guid,
-                PhoneNumber = updateEmployeeDto.PhoneNumber,
-                FirstName = updateEmployeeDto.FirstName,
-                LastName = updateEmployeeDto.LastName,
-                Gender = updateEmployeeDto.Gender,
-                HiringDate = updateEmployeeDto.HiringDate,
-                Email = updateEmployeeDto.Email,
-                BirthDate = updateEmployeeDto.BirthDate,
-                Nik = updateEmployeeDto.Nik,
-                ModifiedDate = DateTime.Now,
-                CreatedDate = getEmployee!.CreatedDate
-            };
-
-            var isUpdate = _employeeRepository.Update(employee);
-            if (!isUpdate)
-            {
-                return 0; // employee not updated
-            }
-
-            return 1;
+        var isUpdate = _employeeRepository.Update(employee);
+        if (!isUpdate)
+        {
+            return 0; // employee not updated
         }
 
-        public int DeleteEmployee(Guid guid)
+        return 1;
+    }
+
+    public int DeleteEmployee(Guid guid)
+    {
+        var isExist = _employeeRepository.IsExist(guid);
+        if (!isExist)
         {
-            var isExist = _employeeRepository.IsExist(guid);
-            if (!isExist)
-            {
-                return -1; // employee not found
-            }
-
-            var employee = _employeeRepository.GetByGuid(guid);
-            var isDelete = _employeeRepository.Delete(employee!);
-            if (!isDelete)
-            {
-                return 0; // employee not deleted
-            }
-
-            return 1;
+            return -1; // employee not found
         }
+
+        var employee = _employeeRepository.GetByGuid(guid);
+        var isDelete = _employeeRepository.Delete(employee!);
+        if (!isDelete)
+        {
+            return 0; // employee not deleted
+        }
+
+        return 1;
+    }
+    public string GenerateNik()
+    {
+        var employee = _employeeRepository.GetAll();
+        if (!employee.Any())
+        {
+            return "111111";
+        }
+
+        var LastData = employee.LastOrDefault();
+        var Nik = (int.Parse(LastData.Nik) + 1).ToString();
+
+        return Nik;
     }
 }

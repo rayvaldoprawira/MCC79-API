@@ -8,7 +8,7 @@ using System.Net;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("Api/Bookings")]
+    [Route("api/bookings")]
     public class BookingController : ControllerBase
     {
         private readonly BookingService _service;

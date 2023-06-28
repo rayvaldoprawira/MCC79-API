@@ -79,6 +79,8 @@ public class BookingDbContext : DbContext
             .HasOne(booking => booking.Room)
             .WithMany(room => room.Bookings)
             .HasForeignKey (booking => booking.RoomGuid);
+/*
+        modelBuilder.Entity<Employee>().Property( e => e.Nik).HasDefaultValue(1111);*/
     }
 
 }
