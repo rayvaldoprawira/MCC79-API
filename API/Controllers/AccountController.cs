@@ -1,4 +1,5 @@
 ﻿using API.DTOs.Accounts;
+using API.DTOs.Auths;
 using API.Services;
 using API.Utilities;
 using API.Utilities.Enums;
@@ -42,6 +43,29 @@ namespace API.Controllers
             });
         }
 
+        [HttpGet("getmaster-byguid")]
+        public IActionResult GetMaster(Guid guid)
+        {
+            var master = _service.GetMasterByGuid(guid);
+            if (master is null)
+            {
+                return NotFound(new ResponseHandler<GetAllMasterDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data not found"
+                });
+            }
+
+            return Ok(new ResponseHandler<GetAllMasterDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data found",
+                Data = master
+            });
+        }
+
 
         [Route("register")]
         [HttpPost]
@@ -66,6 +90,94 @@ namespace API.Controllers
                 Data = createdRegister
             });
         }
+        [HttpPost("login")]
+        public IActionResult Login(LoginDto login)
+        {
+            LoginDto loginSuccess = new LoginDto();
+            try
+            {
+                loginSuccess = _service.Login(login);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.ToLower().Contains("not found"))
+                {
+                    return NotFound(new ResponseHandler<LoginDto>
+                    {
+                        Code = StatusCodes.Status404NotFound,
+                        Status = HttpStatusCode.BadRequest.ToString(),
+                        Message = ex.Message
+                    });
+                }
+                else
+                {
+                    return BadRequest(new ResponseHandler<LoginDto>
+                    {
+                        Code = StatusCodes.Status400BadRequest,
+                        Status = HttpStatusCode.BadRequest.ToString(),
+                        Message = ex.Message
+                    });
+                }
+            }
+
+            return Ok(new ResponseHandler<LoginDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Successfully login",
+                Data = loginSuccess
+            });
+        }
+
+        [HttpPut("change-password")]
+        public IActionResult Update(ChangePasswordDto changePasswordDto)
+        {
+            var update = _service.ChangePassword(changePasswordDto);
+            if (update is -1)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Email Not Found"
+                });
+            }
+
+            if (update is 0)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Otp Doesn't Match"
+                });
+            }
+            if (update is 1)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Otp has been used"
+                });
+            }
+            if (update is 2)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Otp already expired"
+                });
+            }
+            return Ok(new ResponseHandler<ChangePasswordDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Successfully Updated"
+            });
+        }
+
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword(string email)
         {

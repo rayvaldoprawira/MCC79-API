@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using API.DTOs.Auths;
 
 namespace API.Services
 {
@@ -37,7 +38,7 @@ namespace API.Services
             var master = (from e in _employeeRepository.GetAll()
                           join education in _educationRepository.GetAll() on e.Guid equals   education.Guid
                           join u in _universityRepository.GetAll() on education.UniversityGuid equals u.Guid
-                          select new 
+                          select new GetAllMasterDto
                           {
                               Guid = e.Guid,
                               FullName = e.FirstName + e.LastName,
@@ -57,24 +58,20 @@ namespace API.Services
             {
                 return null;
             }
-            var toDto = master.Select(master => new GetAllMasterDto
+            
+            return master;
+        }
+
+        public GetAllMasterDto? GetMasterByGuid(Guid guid)
+        {
+            var master = GetMaster();
+            if (master is null)
             {
-                Guid = master.Guid,
-                FullName = master.FullName,
-                Nik = master.Nik,
-                BirthDate = master.BirthDate,
-                Email = master.Email,
-                Gender = master.Gender,
-                HiringDate = master.HiringDate,
-                PhoneNumber = master.PhoneNumber,
-                Major = master.Major,
-                Degree = master.Degree,
-                Gpa = master.Gpa,
-                UniversityName = master.UniversityName
+                return null;
+            }
+            var masterGetByGuid = master.FirstOrDefault(master => master.Guid == guid);
 
-            });
-
-            return toDto;
+            return masterGetByGuid;
         }
 
         public RegisterDto? Register(RegisterDto registerDto)
@@ -165,6 +162,73 @@ namespace API.Services
             };
 
             return toDto;
+        }
+
+        public LoginDto? Login(LoginDto login)
+        {
+            var emailEmp = _employeeRepository.GetByEmail(login.Email);
+            if (emailEmp == null)
+            {
+                throw new Exception("Email is Not Found !");
+            }
+
+            var pass = _accountRepository.GetByGuid(emailEmp.Guid);
+            var isPasswordValid = Hashing.ValidatePassword(login.Password, pass.Password);
+            if (!isPasswordValid)
+            {
+                throw new Exception("Password Invalid");
+            }
+
+            var toDto = new LoginDto
+            {
+                Email = login.Email,
+                Password = login.Password
+            };
+
+            return toDto;
+        }
+        public int ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            var isExist = _employeeRepository.CheckEmail(changePasswordDto.Email);
+            if (isExist is null)
+            {
+                return -1; //Account Not Found
+            }
+
+            var getAccount = _accountRepository.GetByGuid(isExist.Guid);
+            if (getAccount.Otp != changePasswordDto.Otp)
+            {
+                return 0;
+            }
+
+            if (getAccount.IsUsed == true)
+            {
+                return 1;
+            }
+            if (getAccount.ExpiredTime < DateTime.Now)
+            {
+                return 2;
+            }
+
+            var account = new Account
+            {
+                Guid = getAccount.Guid,
+                IsUsed = getAccount.IsUsed,
+                IsDeleted = getAccount.IsDeleted,
+                ModifiedDate = getAccount.ModifiedDate,
+                CreatedDate = getAccount.CreatedDate,
+                Otp = getAccount.Otp,
+                ExpiredTime = getAccount.ExpiredTime,
+                Password = Hashing.HashPassword(changePasswordDto.NewPassword)
+            };
+
+            var isUpdate = _accountRepository.Update(account);
+            if (!isUpdate)
+            {
+                return 0; // Account not updated
+            }
+
+            return 3;
         }
         public ForgotPasswordDto GenerateOtp(string email)
         {
