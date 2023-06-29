@@ -10,9 +10,8 @@ namespace API.DTOs.Accounts
         [PasswordPolicyAttribute]
         public string Password { get; set; }
         public bool IsDeleted { get; set; }
-        [Required]
         public int Otp { get; set; }
-        public bool IsUsed { get; set; }
+        public bool? IsUsed { get; set; }
         public DateTime ExpiredTime { get; set; }
     }
 }

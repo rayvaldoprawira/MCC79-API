@@ -2,6 +2,14 @@
 using API.DTOs.Accounts;
 using API.Models;
 using API.Utilities;
+using API.Utilities.Enums;
+using System.Net;
+using System.Xml.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 namespace API.Services
 {
@@ -21,6 +29,52 @@ namespace API.Services
             _employeeRepository = employeeRepository;
             _universityRepository = universityRepository;
             _educationRepository = educationRepository;
+        }
+
+        public IEnumerable<GetAllMasterDto>? GetMaster()
+        {
+
+            var master = (from e in _employeeRepository.GetAll()
+                          join education in _educationRepository.GetAll() on e.Guid equals   education.Guid
+                          join u in _universityRepository.GetAll() on education.UniversityGuid equals u.Guid
+                          select new 
+                          {
+                              Guid = e.Guid,
+                              FullName = e.FirstName + e.LastName,
+                              Nik = e.Nik,
+                              BirthDate = e.BirthDate,
+                              Email = e.Email,
+                              Gender = e.Gender,
+                              HiringDate = e.HiringDate,
+                              PhoneNumber = e.PhoneNumber,
+                              Major = education.Major,
+                              Degree = education.Degree,
+                              Gpa = education.Gpa,
+                              UniversityName = u.Name
+                          }).ToList();
+
+            if (!master.Any())
+            {
+                return null;
+            }
+            var toDto = master.Select(master => new GetAllMasterDto
+            {
+                Guid = master.Guid,
+                FullName = master.FullName,
+                Nik = master.Nik,
+                BirthDate = master.BirthDate,
+                Email = master.Email,
+                Gender = master.Gender,
+                HiringDate = master.HiringDate,
+                PhoneNumber = master.PhoneNumber,
+                Major = master.Major,
+                Degree = master.Degree,
+                Gpa = master.Gpa,
+                UniversityName = master.UniversityName
+
+            });
+
+            return toDto;
         }
 
         public RegisterDto? Register(RegisterDto registerDto)
@@ -112,6 +166,58 @@ namespace API.Services
 
             return toDto;
         }
+        public ForgotPasswordDto GenerateOtp(string email)
+        {
+            var employee = _employeeRepository.GetAll().SingleOrDefault(account => account.Email == email);
+            if (employee is null)
+            {
+                return null;
+            }
+
+            var toDto = new ForgotPasswordDto
+            {
+                Email = employee.Email,
+                Otp = GenerateRandomOTP(),
+                ExpiredTime = DateTime.Now.AddMinutes(5)
+            };
+
+            var relatedAccount = _accountRepository.GetByGuid(employee.Guid);
+
+            var update = new Account
+            {
+                Guid = relatedAccount.Guid,
+                Password = relatedAccount.Password,
+                IsDeleted = relatedAccount.IsDeleted,
+                Otp = toDto.Otp,
+                IsUsed = relatedAccount.IsUsed,
+                ExpiredTime = DateTime.Now.AddMinutes(5)
+
+            };
+
+            var updateResult = _accountRepository.Update(update);
+
+            return toDto;
+        }
+
+
+
+        private int GenerateRandomOTP()
+        {
+            Random random = new Random();
+            HashSet<int> uniqueDigits = new HashSet<int>();
+            while (uniqueDigits.Count < 6)
+            {
+                int digit = random.Next(0, 9);
+                uniqueDigits.Add(digit);
+            }
+
+            int generatedOtp = uniqueDigits.Aggregate(0, (acc, digit) => acc * 10 + digit);
+
+            return generatedOtp;
+        }
+
+
+
 
         public IEnumerable<GetAccountDto>? GetAccount()
         {
@@ -128,6 +234,8 @@ namespace API.Services
                                                     IsDeleted = account.IsDeleted,
                                                     IsUsed = account.IsUsed,
                                                     Password = account.Password,
+                                                    Otp = account.Otp,
+                                                    ExpiredTime = DateTime.Now.AddMinutes(5)
                                                 }).ToList();
 
             return toDto; // Account found
@@ -196,7 +304,7 @@ namespace API.Services
                 Guid = updateAccountDto.Guid,
                 Otp = updateAccountDto.Otp,
                 Password = Hashing.HashPassword(updateAccountDto.Password),
-                IsUsed = updateAccountDto.IsUsed,
+                IsUsed = (bool)updateAccountDto.IsUsed,
                 IsDeleted = updateAccountDto.IsDeleted,
                 ModifiedDate = DateTime.Now,
                 CreatedDate = getAccount!.CreatedDate
@@ -228,5 +336,6 @@ namespace API.Services
 
             return 1;
         }
+
     }
 }

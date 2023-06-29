@@ -1,17 +1,21 @@
 ﻿using API.Contracts;
 using API.DTOs.Employees;
 using API.Models;
+using API.DTOs.Accounts;
 
 namespace API.Services;
 
 public class EmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IEducationRepository _educationRepository;
+    private readonly IUniversityRepository _universityRepository;
     public EmployeeService(IEmployeeRepository employeeRepository)
     {
         _employeeRepository = employeeRepository;
     }
 
+  
     public IEnumerable<GetEmployeeDto>? GetEmployee()
     {
         var employees = _employeeRepository.GetAll();
@@ -149,6 +153,22 @@ public class EmployeeService
         }
 
         return 1;
+    }
+    public OtpResponseDto? GetByEmail(string email)
+    {
+        var account = _employeeRepository.GetAll()
+            .FirstOrDefault(e => e.Email.Contains(email));
+
+        if (account != null)
+        {
+            return new OtpResponseDto
+            {
+                Email = account.Email,
+                Guid = account.Guid
+            };
+        }
+
+        return null;
     }
     public string GenerateNik()
     {
