@@ -6,11 +6,14 @@ using API.DTOs.Universities;
 using API.Services;
 using API.Utilities.Enums;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api/universities")]
+[Authorize(Roles = $"{nameof(RoleLevel.Admin)}")]
 public class UniversityController : ControllerBase
 {
     private readonly UniversityService _service;
@@ -21,6 +24,7 @@ public class UniversityController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult GetAll()
     {
         var entities = _service.GetUniversity();
@@ -45,6 +49,7 @@ public class UniversityController : ControllerBase
     }
 
     [HttpGet("{guid}")]
+    [AllowAnonymous]
     public IActionResult GetByGuid(Guid guid)
     {
         var university = _service.GetUniversity(guid);
@@ -153,6 +158,7 @@ public class UniversityController : ControllerBase
     }
 
     [HttpGet("by-name/{name}")]
+    [AllowAnonymous]
     public IActionResult GetByName(string name)
     {
         var universities = _service.GetUniversity(name);

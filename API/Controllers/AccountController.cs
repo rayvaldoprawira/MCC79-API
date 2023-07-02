@@ -1,8 +1,10 @@
 ﻿using API.DTOs.Accounts;
 using API.DTOs.Auths;
+using API.DTOs.Employees;
 using API.Services;
 using API.Utilities;
 using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -10,6 +12,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/accounts")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Admin)}")]
     public class AccountController : ControllerBase
     {
         private readonly AccountService _service;
@@ -19,56 +22,10 @@ namespace API.Controllers
             _service = service;
         }
 
-        [HttpGet("getall-master")]
-        public IActionResult GetMaster()
-        {
-            var entities = _service.GetMaster();
-
-            if (entities == null)
-            {
-                return NotFound(new ResponseHandler<GetAllMasterDto>
-                {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Data not found"
-                });
-            }
-
-            return Ok(new ResponseHandler<IEnumerable<GetAllMasterDto>>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Data found",
-                Data = entities
-            });
-        }
-
-        [HttpGet("getmaster-byguid")]
-        public IActionResult GetMaster(Guid guid)
-        {
-            var master = _service.GetMasterByGuid(guid);
-            if (master is null)
-            {
-                return NotFound(new ResponseHandler<GetAllMasterDto>
-                {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Data not found"
-                });
-            }
-
-            return Ok(new ResponseHandler<GetAllMasterDto>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Data found",
-                Data = master
-            });
-        }
-
 
         [Route("register")]
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Register(RegisterDto register)
         {
             var createdRegister = _service.Register(register);
@@ -90,44 +47,53 @@ namespace API.Controllers
                 Data = createdRegister
             });
         }
+
+
         [HttpPost("login")]
-        public IActionResult Login(LoginDto login)
+        [AllowAnonymous]
+        public IActionResult Login(LoginDto loginDto)
         {
-            LoginDto loginSuccess = new LoginDto();
-            try
+            var login = _service.Login(loginDto);
+
+
+            if (login is "-1")
             {
-                loginSuccess = _service.Login(login);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.ToLower().Contains("not found"))
+                return NotFound(new ResponseHandler<LoginDto>
                 {
-                    return NotFound(new ResponseHandler<LoginDto>
-                    {
-                        Code = StatusCodes.Status404NotFound,
-                        Status = HttpStatusCode.BadRequest.ToString(),
-                        Message = ex.Message
-                    });
-                }
-                else
-                {
-                    return BadRequest(new ResponseHandler<LoginDto>
-                    {
-                        Code = StatusCodes.Status400BadRequest,
-                        Status = HttpStatusCode.BadRequest.ToString(),
-                        Message = ex.Message
-                    });
-                }
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Data null"
+                });
             }
 
-            return Ok(new ResponseHandler<LoginDto>
+            if (login is "0")
+            {
+                return BadRequest(new ResponseHandler<LoginDto>
+                {
+                    Code = StatusCodes.Status400BadRequest,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Data not created"
+                });
+            }
+            if (login is "-2")
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<LoginDto>
+                {
+                    Code = StatusCodes.Status500InternalServerError,
+                    Status = HttpStatusCode.InternalServerError.ToString(),
+                    Message = "Otp does not match"
+                });
+            }
+
+            return Ok(new ResponseHandler<String>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
                 Message = "Successfully login",
-                Data = loginSuccess
+                Data = login
             });
         }
+
 
         [HttpPut("change-password")]
         public IActionResult Update(ChangePasswordDto changePasswordDto)
@@ -178,10 +144,13 @@ namespace API.Controllers
             });
         }
 
+
+
         [HttpPost("forgot-password")]
+        [AllowAnonymous]
         public IActionResult ForgotPassword(string email)
         {
-            var generateOtp = _service.GenerateOtp(email);
+            var generateOtp = _service.ForgotPassword(email);
             if (generateOtp is null)
             {
                 return BadRequest(new ResponseHandler<ForgotPasswordDto>

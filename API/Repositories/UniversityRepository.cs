@@ -13,7 +13,13 @@ public class UniversityRepository : GeneralRepository<University>, IUniversityRe
     {
         return _context.Set<University>().Where(u => u.Name.Contains(name));
     }
-
+    public University? GetByCodeName(string code, string name)
+    {
+        return _context.Set<University>().FirstOrDefault(university => university.Code.ToLower()
+                                                                    == code.ToLower()
+                                                                    && university.Name.ToLower()
+                                                                    == name.ToLower());
+    }
 }
 
 

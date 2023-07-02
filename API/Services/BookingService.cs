@@ -7,10 +7,16 @@ namespace API.Services
     public class BookingService
     {
         private readonly IBookingRepository _bookingRepository;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public BookingService(IBookingRepository bookingRepository)
+        public BookingService(IBookingRepository bookingRepository,
+                              IRoomRepository roomRepository,
+                              IEmployeeRepository employeeRepository)
         {
             _bookingRepository = bookingRepository;
+            _roomRepository = roomRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public IEnumerable<GetBookingDto>? GetBooking()
@@ -141,6 +147,112 @@ namespace API.Services
             }
 
             return 1;
+        }
+
+        public IEnumerable<BookingsLengthDto>? BookingDuration()
+        {
+            var bookings = _bookingRepository.GetAll();
+            var rooms = _roomRepository.GetAll();
+
+            var entities = (from booking in bookings
+                            join room in rooms on booking.RoomGuid equals room.Guid
+                            select new
+                            {
+                                guid = room.Guid,
+                                startDate = booking.StartDate,
+                                endDate = booking.EndDate,
+                                roomName = room.Name
+                            }).ToList();
+
+            var bookingDurations = new List<BookingsLengthDto>();
+
+            foreach (var entity in entities)
+            {
+                TimeSpan duration = entity.endDate - entity.startDate;
+
+                // Count the number of weekends within the duration
+                int totalDays = (int)duration.TotalDays;
+                int weekends = 0;
+
+                for (int i = 0; i <= totalDays; i++)
+                {
+                    var currentDate = entity.startDate.AddDays(i);
+                    if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        weekends++;
+                    }
+                }
+
+                // Calculate the duration without weekends
+                TimeSpan bookingLength = duration - TimeSpan.FromDays(weekends);
+
+                var bookingDurationDto = new BookingsLengthDto
+                {
+                    RoomGuid = entity.guid,
+                    RoomName = entity.roomName,
+                    BookingLength = bookingLength
+                };
+
+                bookingDurations.Add(bookingDurationDto);
+            }
+
+            return bookingDurations;
+        }
+
+        public List<BookingsDetailDto>? GetBookingDetais()
+        {
+            var booking = _bookingRepository.GetBookingDetails();
+            var bookingDetails = booking.Select(b => new BookingsDetailDto
+            {
+                Guid = b.Guid,
+                BookedNik = b.BookedNik,
+                BookedBy = b.BookedBy,
+                RoomName = b.RoomName,
+                StartDate = b.StartDate,
+                EndDate = b.EndDate,
+                Status = b.Status,
+                Remarks = b.Remarks
+            }).ToList();
+
+            return bookingDetails;
+        }
+
+        public BookingsDetailDto? GetBookingDetailsByGuid(Guid guid)
+        {
+            var relatedBooking = GetBookingDetais().SingleOrDefault(b => b.Guid == guid);
+            return relatedBooking;
+        }
+
+        public IEnumerable<BookingsTodayDto>? BookingToday()
+        {
+            var bookings = _bookingRepository.GetAll();
+            if (bookings is null)
+            {
+                return null;
+            }
+
+            var employees = _employeeRepository.GetAll();
+            var rooms = _roomRepository.GetAll();
+
+            var bookingToday = (from booking in bookings
+                                join employee in employees on booking.EmployeeGuid equals employee.Guid
+                                join room in rooms on booking.RoomGuid equals room.Guid
+                                where booking.StartDate <= DateTime.Now.Date && booking.EndDate >= DateTime.Now
+                                select new BookingsTodayDto
+                                {
+                                    BookingGuid = booking.Guid,
+                                    RoomName = room.Name,
+                                    Status = booking.Status,
+                                    Floor = room.Floor,
+                                    BookedBy = employee.FirstName + " " + employee.LastName
+                                }).ToList();
+
+            if (!bookingToday.Any())
+            {
+                return null;
+            }
+
+            return bookingToday;
         }
     }
 }

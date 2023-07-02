@@ -2,6 +2,7 @@
 using API.Services;
 using API.Utilities;
 using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -9,6 +10,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/accountRole")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Admin)}")]
     public class AccountRoleController : ControllerBase
     {
         private readonly AccountRoleService _service;

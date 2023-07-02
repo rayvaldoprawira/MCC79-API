@@ -1,6 +1,6 @@
 ﻿using API.Utilities.Enums;
 
-namespace API.DTOs.Accounts
+namespace API.DTOs.Employees
 {
     public class GetAllMasterDto
     {
@@ -16,5 +16,6 @@ namespace API.DTOs.Accounts
         public string Degree { get; set; }
         public double Gpa { get; set; }
         public string UniversityName { get; set; }
+        public string Role { get; set; }
     }
 }

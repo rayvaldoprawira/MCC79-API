@@ -2,6 +2,7 @@
 using API.Services;
 using API.Utilities;
 using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -9,6 +10,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/bookings")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Admin)}, {nameof(RoleLevel.Manager)}")]
     public class BookingController : ControllerBase
     {
         private readonly BookingService _service;
@@ -149,5 +151,100 @@ namespace API.Controllers
                 Message = "Successfully deleted"
             });
         }
+
+        [Route("bookingsLength")]
+        [HttpGet]
+        public IActionResult CalculateBookingLength()
+        {
+            var entities = _service.BookingDuration();
+            if (entities == null || !entities.Any())
+            {
+                return NotFound(new ResponseHandler<BookingsLengthDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data not found"
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<BookingsLengthDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data found",
+                Data = entities
+            });
+        }
+
+        [HttpGet("details")]
+        public IActionResult GetBookingDetails()
+        {
+            var bookingDetails = _service.GetBookingDetais();
+            if (bookingDetails == null)
+            {
+                return NotFound(new ResponseHandler<GetBookingDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<BookingsDetailDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "All Data Found",
+                Data = bookingDetails
+            });
+        }
+
+        [HttpGet("details-by-guid")]
+        public IActionResult GetBookingByGuid(Guid guid)
+        {
+            var bookingDetailsGuid = _service.GetBookingDetailsByGuid(guid);
+            if (bookingDetailsGuid == null)
+            {
+                return NotFound(new ResponseHandler<GetBookingDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+                });
+
+            }
+            return Ok(new ResponseHandler<BookingsDetailDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "All Data Found",
+                Data = bookingDetailsGuid
+            });
+        }
+
+        [HttpGet("booking-today")]
+        public IActionResult GetBookingToday()
+        {
+            var bookingDetailsGuid = _service.BookingToday();
+            if (bookingDetailsGuid == null)
+            {
+                return NotFound(new ResponseHandler<GetBookingDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+                });
+
+            }
+            return Ok(new ResponseHandler<IEnumerable<BookingsTodayDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "All Data Found",
+                Data = bookingDetailsGuid
+            });
+        }
+
     }
 }

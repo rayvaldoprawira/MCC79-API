@@ -2,6 +2,7 @@
 using API.Services;
 using API.Utilities;
 using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -9,6 +10,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/rooms")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Admin)}, {nameof(RoleLevel.Manager)}")]
     public class RoomController : ControllerBase
     {
         private readonly RoomService _service;
@@ -147,6 +149,52 @@ namespace API.Controllers
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
                 Message = "Successfully deleted"
+            });
+        }
+        [HttpGet("name/{name}")]
+        public IActionResult GetByName(string name)
+        {
+            var room = _service.GetRoom(name);
+            if (room is null)
+            {
+                return NotFound(new ResponseHandler<GetRoomDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data By Name Not Found"
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<GetRoomDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data By Name Found",
+                Data = room
+            });
+        }
+
+        [HttpGet("get-unused-rooms")]
+        public IActionResult GetUnusedRooms()
+        {
+            var rooms = _service.GetUnusedRoom();
+            if (rooms.Count() == 0)
+            {
+                return NotFound(new ResponseHandler<IEnumerable<UnusedRoomDto>>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "All Rooms In Used"
+
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<UnusedRoomDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Room Unused",
+                Data = rooms
             });
         }
     }

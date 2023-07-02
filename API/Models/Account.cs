@@ -9,6 +9,9 @@ namespace API.Models
         [Column("password", TypeName ="nvarchar(max)")]
         public string Password { get; set; }
 
+        [NotMapped]
+        public string ConfirmPassword { get; set; }
+
         [Column("is_deleted")]
         public bool IsDeleted { get; set; }
 

@@ -11,7 +11,13 @@ namespace API.Repositories
         {
         }
 
-        Employee? IEmployeeRepository.GetByEmail(string email)
+        public IEnumerable<Employee> GetByFirstName(string name)
+        {
+            return _context.Set<Employee>().Where(employee => employee.FirstName.Contains(name));
+        }
+
+
+        public Employee? GetByEmail(string email)
         {
             return _context.Set<Employee>().SingleOrDefault(u => u.Email == email);
         }

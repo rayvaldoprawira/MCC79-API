@@ -2,6 +2,7 @@
 using API.Services;
 using API.Utilities;
 using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -9,6 +10,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/educations")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Admin)}")]
     public class EducationController : ControllerBase
     {
         private readonly EducationService _service;
@@ -19,6 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             var entities = _service.GetEducation();
@@ -43,6 +46,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{guid}")]
+        [AllowAnonymous]
         public IActionResult GetByGuid(Guid guid)
         {
             var education = _service.GetEducation(guid);

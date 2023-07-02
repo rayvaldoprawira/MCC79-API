@@ -2,6 +2,7 @@
 using API.Services;
 using API.Utilities;
 using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -9,6 +10,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/employees")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Admin)}")]
     public class EmployeeController : ControllerBase
     {
         private readonly EmployeeService _service;
@@ -147,6 +149,78 @@ namespace API.Controllers
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
                 Message = "Successfully deleted"
+            });
+        }
+
+        [HttpGet("name/{firstName}")]
+        [AllowAnonymous]
+        public IActionResult GetByFirstName(string firstName)
+        {
+            var employee = _service.GetEmploye(firstName);
+            if (employee == null)
+            {
+                return NotFound(new ResponseHandler<GetEmployeeDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data By Name Not Found"
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<GetEmployeeDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data By Name Found",
+                Data = employee
+            });
+        }
+
+        [HttpGet("get-all-master")]
+        [AllowAnonymous]
+        public IActionResult GetMaster()
+        {
+            var master = _service.GetMaster();
+            if (master is null)
+            {
+                return NotFound(new ResponseHandler<GetAllMasterDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<GetAllMasterDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data Found",
+                Data = master
+            });
+        }
+
+        [HttpGet("get-master/{guid}")]
+        [AllowAnonymous]
+        public IActionResult GetMasterByGuid(Guid guid)
+        {
+            var masterGuid = _service.GetMasterByGuid(guid);
+            if (masterGuid is null)
+            {
+                return NotFound(new ResponseHandler<GetAllMasterDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data Not Found"
+                });
+            }
+
+            return Ok(new ResponseHandler<GetAllMasterDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data Found",
+                Data = masterGuid
             });
         }
     }
