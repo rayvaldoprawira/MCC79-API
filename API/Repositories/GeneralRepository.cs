@@ -28,15 +28,10 @@ public class GeneralRepository<TEntity> : IGeneralRepository<TEntity>
         }
     }
 
-    public bool Delete(Guid guid)
+    public bool Delete(TEntity entity)
     {
         try
         {
-            var entity = GetByGuid(guid);
-            if (entity is null)
-            {
-                return false;
-            }
             _context.Set<TEntity>().Remove(entity);
             _context.SaveChanges();
             return true;
@@ -45,7 +40,7 @@ public class GeneralRepository<TEntity> : IGeneralRepository<TEntity>
         {
             return false;
         }
-        
+
     }
 
     public ICollection<TEntity> GetAll()
@@ -55,8 +50,11 @@ public class GeneralRepository<TEntity> : IGeneralRepository<TEntity>
 
     public TEntity? GetByGuid(Guid guid)
     {
-        return _context.Set<TEntity>().Find(guid);
+        var entity = _context.Set<TEntity>().Find(guid);
+        _context.ChangeTracker.Clear();
+        return entity;
     }
+
 
     public bool Update(TEntity entity)
     {
@@ -67,6 +65,10 @@ public class GeneralRepository<TEntity> : IGeneralRepository<TEntity>
             return true;
         }
         catch { return false; }
+    }
+    public bool IsExist(Guid guid)
+    {
+        return GetByGuid(guid) is not null;
     }
 }
 

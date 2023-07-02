@@ -1,4 +1,4 @@
-﻿using API.Contracts;
+﻿/*using API.Contracts;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
@@ -69,3 +69,4 @@ public class GeneralController<TEntity> : ControllerBase
 }
 
 
+*/
