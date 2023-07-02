@@ -7,7 +7,8 @@ namespace API.DTOs.Accounts
     {
         [Required]
         public Guid Guid { get; set; }
-        [PasswordPolicyAttribute]
+
+        [PasswordPolicy]
         public string Password { get; set; }
         public bool IsDeleted { get; set; }
         public int Otp { get; set; }

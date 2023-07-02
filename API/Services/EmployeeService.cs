@@ -247,11 +247,8 @@ public class EmployeeService
                           Degree = education.Degree,
                           Gpa = education.Gpa,
                           UniversityName = u.Name,
-                          Role = r.Name
+                          Role = r.Name,
                       }).ToList();
-
-
-       
 
         if (!master.Any())
         {
@@ -259,6 +256,8 @@ public class EmployeeService
         }
 
         return master;
+
+      
     }
 
     public GetAllMasterDto? GetMasterByGuid(Guid guid)

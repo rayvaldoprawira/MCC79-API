@@ -12,7 +12,9 @@ namespace API.DTOs.Auths
         public int Otp { get; set; }
         [PasswordPolicy]
         public string NewPassword { get; set; }
+
         [ConfirmPassword("NewPassword", ErrorMessage = "Password and Confirmation password didn't match.")]
+        [Compare("NewPassword")]
         public string ConfirmPassword { get; set;}
     }
 }

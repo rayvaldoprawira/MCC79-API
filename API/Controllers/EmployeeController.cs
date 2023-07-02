@@ -153,7 +153,6 @@ namespace API.Controllers
         }
 
         [HttpGet("name/{firstName}")]
-        [AllowAnonymous]
         public IActionResult GetByFirstName(string firstName)
         {
             var employee = _service.GetEmploye(firstName);
@@ -177,7 +176,7 @@ namespace API.Controllers
         }
 
         [HttpGet("get-all-master")]
-        [AllowAnonymous]
+
         public IActionResult GetMaster()
         {
             var master = _service.GetMaster();
@@ -201,7 +200,7 @@ namespace API.Controllers
         }
 
         [HttpGet("get-master/{guid}")]
-        [AllowAnonymous]
+
         public IActionResult GetMasterByGuid(Guid guid)
         {
             var masterGuid = _service.GetMasterByGuid(guid);

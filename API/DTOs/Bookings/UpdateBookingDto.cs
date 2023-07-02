@@ -9,7 +9,9 @@ namespace API.DTOs.Bookings
         public Guid Guid { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        [Range(0, 4)]
+
+        [Required]
+        [Range(0, 4, ErrorMessage = "Request = 0, Reject = 1, UpComing = 2, OnGoing = 3, Done = 4 ")]
         public StatusLevel Status { get; set; }
         public string Remarks { get; set; }
         [Required]

@@ -10,7 +10,7 @@ namespace API.DTOs.Accounts
         public string Email { get; set; }
 
         [Required]
-        [PasswordPolicyAttribute]
+        [PasswordPolicy]
         public string Password { get; set; }
     }
 }
