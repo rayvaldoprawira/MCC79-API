@@ -1,0 +1,38 @@
+
+
+#myTabel_wrapper div.dt-buttons button.dt-button.buttons-collection.buttons-colvis {
+    font-weight: 700;
+    background-color: antiquewhite;
+    color: black;
+    border-radius: 10px;
+    border-color: black;
+}
+#myTabel_wrapper div.dt-buttons button.dt-button.buttons-excel.buttons-html5 {
+    background-color: aquamarine;
+    font-weight: 600;
+    color: black;
+    border-radius: 10px;
+    border-color: black;
+}
+#myTabel_wrapper div.dt-buttons button.dt-button.buttons-pdf.buttons-html5 {
+    background-color:peachpuff;
+    color: black;
+    font-weight: 600;
+    border-radius: 10px;
+    border-color: black;
+}
+#myTabel_wrapper div.dt-buttons button.dt-button.buttons-copy.buttons-html5 {
+    background-color: burlywood;
+    color: black;
+    font-weight: 600;
+    border-radius: 10px;
+    border-color: black;
+}
+
+#myTabel_wrapper div.dt-buttons button.dt-button.buttons-print {
+    background-color: darksalmon;
+    color: black;
+    font-weight: 600;
+    border-radius: 10px;
+    border-color: black;
+}
