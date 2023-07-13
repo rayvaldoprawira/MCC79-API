@@ -223,6 +223,27 @@ public class EmployeeService
 
         return Nik;
     }
+    public IEnumerable<ChartDto>? GetChart()
+    {
+        var chart = (from e in _employeeRepository.GetAll()
+                     join edu in _educationRepository.GetAll() on e.Guid equals edu.Guid
+                     join u in _universityRepository.GetAll() on edu.UniversityGuid equals u.Guid
+
+                     select new ChartDto
+                     {
+                         Guid = e.Guid,
+                         FullName = e.FirstName + " " + e.LastName,
+                         UniversityName = u.Name,
+                     }).ToList();
+        if (!chart.Any())
+        {
+            return null;
+        }
+
+        return chart;
+    }
+
+
 
     public IEnumerable<GetAllMasterDto>? GetMaster()
     {

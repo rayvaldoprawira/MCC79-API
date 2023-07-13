@@ -3,22 +3,135 @@
 }
 
 <h1 id="judul">DATA</h1>
+<div style="margin-bottom: 8px; float: right"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCreate">Create</button></div>
 <table class="table    table-striped table-hover" id="myTabel">
     <thead class="table-dark">
         <tr>
             <th scope="col">No</th>
-            <th scope ="col">Nama</th>
+            <th scope="col">NIK</th>
+            <th scope ="col">Full Name</th>
             <th scope="col">Birth Date</th>
             <th scope="col">Gender</th>
             <th scope="col">Hiring Date</th>
             <th scope="col">Email</th>
             <th scope="col">Phone Number</th>
-            <th scope="col">Major</th>
-            <th scope="col">Degree</th>
-            <th scope="col">University</th>
             <th scope="col">Detail</th>
         </tr>
     </thead>
     <tbody id="tbody">
     </tbody>
 </table>
+
+<!-- Modal Create -->
+<div id="modalCreate" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name *</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter First Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="birthDate" class="form-label">Birth Date *</label>
+                        <input type="date" class="form-control" id="birthDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Gender *</label>
+                        <select class="form-select" id="gender">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hiringDate" class="form-label">Hiring Date *</label>
+                        <input type="date" class="form-control" id="hiringDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter Email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number *</label>
+                        <input type="number" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="display: grid; grid-template-columns: 1fr auto;">
+                <div style="grid-column: 1;">
+                    <a style="font-family:Calibri ;text-align:left;">(*) Is Required</a>
+                </div>
+                <div style="grid-column: 2;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Insert()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Update -->
+<div id="modalUpdate" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" class="form-control" id="nikU" value="">
+                    <input type="hidden" class="form-control" id="guidU" value="">
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name *</label>
+                        <input type="text" class="form-control" id="firstNameU">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastNameU" placeholder="Enter Last Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="birthDate" class="form-label">Birth Date *</label>
+                        <input type="date" class="form-control" id="birthDateU">
+                    </div>
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Gender *</label>
+                        <select class="form-select" id="genderU">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hiringDate" class="form-label">Hiring Date *</label>
+                        <input type="date" class="form-control" id="hiringDateU">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="emailU" placeholder="Enter Email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number *</label>
+                        <input type="number" class="form-control" id="phoneNumberU" placeholder="Enter Phone Number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="display: grid; grid-template-columns: 1fr auto;">
+                <div style="grid-column: 1;">
+                    <a style="font-family:Calibri ;text-align:left;">(*) Is Required</a>
+                </div>
+                <div style="grid-column: 2;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Update1()">Submit Update</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>
