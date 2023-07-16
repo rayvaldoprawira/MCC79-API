@@ -88,7 +88,7 @@ for (var i = 0; i < arrayMhsObj.length; i++) {
     if (arrayMhsObj[i].fakultas.name === 'komputer') {
         fakultas.push(arrayMhsObj[i])
     }
-*//*}
+}
 
 console.log(fakultas)
 
@@ -104,7 +104,7 @@ for (var i = 0; i < arrayMhsObj.length; i++) {
     }
 }
 
-    console.log(arrayMhsObj)*//*
+    console.log(arrayMhsObj)
 
 
 console.log("Latihan Javascript")
@@ -207,10 +207,11 @@ let FakultasKomp = [];
 
 FakultasKomp = arrayMhsObj.filter(mhs => mhs.fakultas.name == "komputer");
 
-console.log(arrayMhsObj);*//*
-*//*console.log(FakultasKomp);*//*
+console.log(arrayMhsObj);
+console.log(FakultasKomp);
+*/
 
-*//*$.ajax({
+$.ajax({
     url: "https://pokeapi.co/api/v2/pokemon/"
 }).done((result) => {
     console.log(result.results);
@@ -225,7 +226,7 @@ console.log(arrayMhsObj);*//*
     })
     $("#tbody").html(temp);
 
-})*//*
+})
 
 function detail(stringURL) {
     $.ajax({
@@ -253,7 +254,7 @@ function detail(stringURL) {
             tempForm += `<div class="badge bg-warning"> Form : ${val.name} </div> <div class="badge bg-warning"> Species : ${res.species.name} </div>  `;
         })
         $("#listpoke2").html(tempForm);
-    *//*    let tempSpec = "";
+        let tempSpec = "";
         $.each(res.species, (key, val) => {
             $.each(val.url, (key, val2) => {
                 tempSpec += `<ul>
@@ -263,8 +264,8 @@ function detail(stringURL) {
             </ul>`;
             })
         })
-        *//*   $("#listpoke3").html(res.species.url.description);*//*
-        console.log(tempSpec);*//*
+           $("#listpoke3").html(res.species.url.description);
+        console.log(tempSpec);
         $("#title").html(res.name);
         $("#hp").css("width", res.stats[0].base_stat + "%").html("HP : " + res.stats[0].base_stat);
         $("#attack").css("width", res.stats[1].base_stat + "%").html("Attack : " + res.stats[1].base_stat);
@@ -303,4 +304,4 @@ $(document).ready(function () {
 
         ]
     });
-});*/
+});

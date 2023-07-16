@@ -6,11 +6,11 @@
             dataType: "JSON",
             dataSrc: "data" //data source -> butuh array of object
         },
-        dom: "<'ui grid'" +
+        dom: /*"<'ui grid'" +
             "<'row'" + "<'col-3'l>" + "<'col-6 mt--2'B>" + "<'col-3'f>" + ">" +
             "<'row dt-table'" + "<'col'tr>" + ">" +
             "<'row'" + "<'col-4'i>" + "<'col-8'p>" + ">" +
-            ">",
+            ">",*/ 'lBfrtip',    
 
         buttons: [
             {
@@ -21,9 +21,11 @@
             },
             {
                 extend: 'print',
+                className: 'btn-success',
                 exportOptions: {
                     columns: ':visible'
                 }
+               
             }, 'copy', {
                 extend: 'excelHtml5',
                 title: 'Excel',

@@ -29,10 +29,13 @@
     border-color: black;
 }
 
-#myTabel_wrapper div.dt-buttons button.dt-button.buttons-print {
+/*#myTabel_wrapper div.dt-buttons button.dt-button.buttons-print {
     background-color: darksalmon;
     color: black;
     font-weight: 600;
     border-radius: 10px;
     border-color: black;
-}
+}*/
+/*#myTabel_wrapper div.dt-buttons button.dt-button.buttons-print.btn.btn-primary{
+    color:white;
+}*/

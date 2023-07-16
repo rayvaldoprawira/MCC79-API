@@ -109,7 +109,7 @@ public class EmployeeController : Controller
         var result = await repository.Put(employee.Guid, employee);
         if (result.Status=="200")
         {
-            TempData["Sucess"] = "Data Berhasil Diubah";
+            TempData["Success"] = "Data Berhasil Diubah";
         }
         else
         {

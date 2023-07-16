@@ -35,6 +35,7 @@ public class RegisterDto
     public string UniversityName { get; set; }
     [Required]
     [PasswordPolicy]
+/*    [DataType(DataType.Password)]*/
     public string Password { get; set; }
     [Required(ErrorMessage = "Password Not Match")]
     [DataType(DataType.Password)]
