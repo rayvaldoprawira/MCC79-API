@@ -43,7 +43,7 @@ public class AccountController : Controller
         else if(result.Status == "OK")
         {
             HttpContext.Session.SetString("JWToken", result.Data);
-            return RedirectToAction("Index", "Employee");
+            return RedirectToAction("Index", "Home");
         }
         return View();
     }

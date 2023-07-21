@@ -1,4 +1,5 @@
 ﻿using Client.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -13,9 +14,31 @@ namespace Client.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("/unauthorized")]
+        public IActionResult Unauthorized()
+        {
+            return View("401");
+        }
+        [AllowAnonymous]
+        [Route("/notfound")]
+        public IActionResult Notfound()
+        {
+            return View("404");
+        }
+
+        [AllowAnonymous]
+        [Route("/forbidden")]
+        public IActionResult Forbidden()
+        {
+            return View("403");
         }
 
         public IActionResult Privacy()

@@ -1,13 +1,17 @@
 ﻿using API.DTOs.Employees;
 using API.Models;
+using API.Utilities.Enums;
 using Client.Contracts;
 using Client.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Data;
 using System.Diagnostics;
 
 namespace Client.Controllers;
 
+[Authorize(Roles = $"{nameof(RoleLevel.Admin)}")]
 public class EmployeeController : Controller
 {
     private readonly IEmployeeRepository repository;
